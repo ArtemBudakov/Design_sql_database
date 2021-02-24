@@ -1,0 +1,203 @@
+-- Please, sorry for russians names of tables.
+
+create table Пользователи (
+	id_пользователя int identity primary key,
+	имя varchar(100) not null,
+	фамилия varchar(100) not null,
+	email varchar(100) not null,
+	логин varchar(100) not null,
+	пароль varchar(100) not null )
+go
+
+create table Торговые_названия (
+	id_торгового_названия int identity primary key,
+	торговое_название varchar(50) not null)
+
+go
+create table Не_патентованные_названия (
+	id_не_патентованного_названия int identity primary key,
+	не_патентованное_название varchar(50) not null)
+
+go
+
+create table Производители (
+	id_производителя int identity primary key,
+	название_производителя varchar(100) not null)
+go
+
+create table Формы_выпуска (
+	id_формы_выпуска int identity primary key,
+	название_формы_выпуска varchar(100) not null)
+go
+
+create table Статусы_препаратов (
+	id_статуса_препарата int identity primary key,
+	статус_препарата varchar(100) not null)
+go
+
+create table Упаковки (
+	id_упаковки int identity primary key,
+	название_упаковки varchar(100) not null)
+go
+
+create table Единицы_измерения (
+	id_единицы_измерения int identity primary key,
+	название_единицы_измерения varchar(100) not null)
+go
+
+create table Элементы (
+	id_элемента int identity primary key,
+	id_единицы_измерения int not null references Единицы_измерения,
+	название_элемента varchar(100) not null,
+	описание_элемента varchar(100))
+go
+
+create table Дозы (
+	id_дозы int identity primary key,
+	id_единицы_измерения int not null references Единицы_измерения,
+	количество float not null)
+go
+
+
+create table Препараты (
+	id_препарата int identity primary key,
+	id_дозы int not null references Дозы,
+	id_упаковки int not null references Упаковки,
+	id_формы_выпуска int not null references Формы_выпуска,
+	id_производителя int not null references Производители,
+	id_не_патентованного_названия int not null references Не_патентованные_названия,
+	id_торгового_названия int not null references Торговые_названия)
+go
+
+create table Состав (
+	id_состава int identity primary key,
+	id_препарата int not null references Препараты,
+	id_элемента int not null references Элементы,
+	количество float not null)
+go
+
+
+
+create table Должности (
+	id_должности int identity primary key,
+	название_должности varchar (100) not null,
+	зарплата float not null,
+	описание_должности varchar (100))
+go
+
+create table Паспорта (
+	id_паспорта int identity primary key,
+	серия int not null,
+	номер int not null,
+	дата_выдачи date not null,
+	дата_рождения date not null,
+	кем_выдан varchar (100) not null)
+go
+
+create table Сотрудники (
+	id_сотрудника int identity primary key,
+	id_паспорта int not null references Паспорта on delete no action on update cascade,
+	id_должности int not null references Должности,
+	Фамилия varchar (100) not null,
+	Имя varchar (100) not null,
+	Отчество varchar (100) not null)
+go
+
+create table Районы (
+	id_района int identity primary key,
+	название_района varchar (100) not null)
+go
+
+create table Аптеки (
+	id_аптеки int identity primary key,
+	id_района int not null references Районы,
+	название_аптеки varchar (100) not null)
+go
+
+create table Список_сотрудников_в_аптеке (
+	id_списка_сотрудников_в_аптеке int identity primary key,
+	id_аптеки int not null references Аптеки,
+	id_сотрудника int not null references Сотрудники)
+go
+
+
+create table Список_препаратов (
+	id_списка_препаратов int identity primary key,
+	id_аптеки int not null references Аптеки,
+	id_статуса_препарата int not null references Статусы_препаратов,
+	id_препарата int not null references Препараты)
+go
+
+alter table Пользователи
+add unique (логин)
+alter table Пользователи
+add unique (email)
+
+insert: 
+INSERT INTO Единицы_измерения
+VALUES ('мл');
+INSERT INTO Единицы_измерения
+VALUES ('грамм');
+INSERT INTO Единицы_измерения
+VALUES ('штук');
+
+insert into Дозы (id_единицы_измерения, количество)
+values ('1','25'), ('1','66'), ('2', '11'), ('3', '100');
+
+
+insert into Не_патентованные_названия (Не_патентованное_название)
+values ('Ацикловир'), ('Кофеин'), ('Допамин'), ('Гистамин');
+
+insert into Торговые_названия (Торговое_название)
+values ('Зовиракс'), ('Ацикловир Белупо'), ('Кофеин'), ('Кофеин безводный'), ('Допамин Адмеда'), ('Дофамин'), ('Гистаглобин'), ('Зодак'); -- Ацикловир, Ацикловир, Кофеин, Кофеин,  Допамин, Допамин, Гистамин, Гистамин
+
+insert into Производители (название_производителя)
+values ('Производитель один'), ('Производитель два'), ('Производитель три'), ('Производитель четыре');
+
+insert into Формы_выпуска (Название_формы_выпуска)
+values ('Капсулы'), ('таблетки'), ('свечи'), ('гель');
+
+insert into Статусы_препаратов (Статус_препарата)
+values ('В наличии'), ('Продан'), ('Списан'), ('Ожидается');
+
+insert into Упаковки (название_упаковки)
+values ('туба'), ('пластина'), ('спрей'), ('коробка');
+
+insert into Элементы (id_единицы_измерения, название_элемента, описание_элемента)
+values ('1', 'первый элемент', 'описание 1'),('2', 'второй элемент', 'описание 2'),('3', 'третий элемент', 'описание 3'),('1', 'четвёртый элемент', '');
+
+insert into Препараты (id_дозы, id_упаковки, id_формы_выпуска, id_производителя, id_не_патентованного_названия, id_торгового_названия)
+values ('1','1','2','3','4','1'),('2','3','1','4','1','2'),('2','1','3','4','1','2'),('3','4','1','2','3','2');
+
+insert into Состав (id_препарата, id_элемента, количество)
+values ('1', '5', '123'),('1', '6', '321'),('1', '7', '11'),('2', '8', '22'),('2', '5', '12'),('3', '6', '44'),('3', '7', '531'),('4', '8', '87');
+
+insert into Районы (название_района)
+values ('Невский'), ('Московский');
+
+insert into Аптеки (id_района, название_аптеки)
+values ('1', 'Невская 1'), ('1', 'Невская 2'), ('2', 'Московская 1'), ('2', 'Московская 2');
+
+insert into Паспорта (серия, номер, дата_выдачи, дата_рождения, кем_выдан)
+values ('123456', '1234', '2011-11-11', '1998-11-11', 'ФСБ России'), ('112345', '1234', '2010-10-22', '2010-10-22', 'Отдел полиции');
+
+insert into Должности (название_должности, зарплата)
+values ('фармацевт', '12345'), ('уборщик', '32145');
+
+insert into Сотрудники (id_паспорта, id_должности, Фамилия, Имя, Отчество)
+values ('11', '1', 'Фамилия 1', 'Имя 1', 'Отчество 1'), ('12', '2', 'Фамилия 2', 'имя 2', 'ОТчество 2');
+
+insert into Список_сотрудников_в_аптеке (id_аптеки, id_сотрудника)
+values ('1','2'), ('2','3');
+
+insert into Список_препаратов (id_аптеки, id_статуса_препарата, id_препарата, цена, количество)
+values ('1', '2', '2', '123.33', '33'), ('2', '1', '2', '321', '11'),('3', '1', '1', '512', '6');
+
+insert into Пользователи (имя, фамилия, email, логин, пароль)
+values ('имя_тест','фамилия_тест','test@mail.com','log','pas');
+
+
+alter table Список_препаратов
+add цена float not null
+alter table Список_препаратов
+add количество int
