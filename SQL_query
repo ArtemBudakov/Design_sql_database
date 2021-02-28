@@ -1,4 +1,5 @@
 -- Please, sorry for russians names of tables.
+-- Microsoft SQL Server code
 
 create table Пользователи (
 	id_пользователя int identity primary key,
